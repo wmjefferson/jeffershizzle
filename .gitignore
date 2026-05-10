@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.code-workspace
+*.zip
+__pycache__/
+*.pyc
