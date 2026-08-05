@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="../other/assets/jeffersh-git.jpeg" alt="Jeffershizzle banner" width="800" />
+  <img src="./git-banner.jpeg" alt="Jeffershizzle banner" width="800" />
 </div>
 
 # Jeffershizzle
