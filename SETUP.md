@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="./git-banner.jpeg" alt="Jeffershizzle Banner" width="800" />
+</div>
+
 # Jeffershizzle — Setup Guide for Home Computer
 
 ## What's in This Export
@@ -52,22 +56,11 @@ It will start on port 8030, serving from `E:\jeffershizzle\images\`.
 
 ## Step 3: Run the Cloudflare Tunnel
 
-Use the same token-file pattern as the other apps instead of keeping the full token inline in your command history.
-
-Create a local token file on the home server:
-
 ```powershell
-New-Item -ItemType Directory -Force C:\Users\Bill\.cloudflared\tokens
-'<paste-api-jeffershizzle-token-here>' | Set-Content C:\Users\Bill\.cloudflared\tokens\api-jeffershizzle.token
+cloudflared.exe tunnel run --token eyJhIjoiNmY0NGE5MzZjY2Y0NzFhNDYwNDM1Zjg1MzZkZTg4ZTgiLCJ0IjoiNWNiMjlkOGItNzk0MC00MDk0LTgyMWUtMjcxMmIzNDlhMmRkIiwicyI6IllUazRZakUxTkRBdE5Fa3paQzAwWmpObUxXRmlPREV0WmpSak1tSTNOemN6TmpZdyJ9
 ```
 
-Then run the tunnel:
-
-```powershell
-cloudflared.exe tunnel run --token-file C:\Users\Bill\.cloudflared\tokens\api-jeffershizzle.token
-```
-
-This routes `api.jeffershizzle.com` -> `localhost:8030`.
+This routes `api.jeffershizzle.com` → `localhost:8030`.
 
 Make sure the tunnel's public hostname is configured in Cloudflare dashboard:
 - **Subdomain:** `api`
@@ -128,7 +121,7 @@ The SPA auto-detects localhost and uses `http://localhost:8030` for images.
 - **API port:** 8030
 - **Image root:** `E:\jeffershizzle\images\`
 - **CORS origins:** `jeffershizzle.com`, `www.jeffershizzle.com`, `localhost:3000`, `localhost:5500`
-- **Cloudflare tunnel:** `api-jeffershizzle` (ID: 5cb29d8b-7940-4094-821e-2712b349a2dd)
+- **Cloudflare tunnel:** `api-jeffershizzle` (ID: 8e56ed6a-8926-4e30-9f43-e964aa762f26)
 - **ASO host:** 143.95.39.115
 
 ---
