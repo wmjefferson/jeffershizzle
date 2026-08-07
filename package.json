@@ -1,0 +1,8 @@
+{
+  "name": "jeffershizzle",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "publish": "node scripts/publish.mjs"
+  }
+}
