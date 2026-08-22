@@ -13,19 +13,19 @@
 
 ## Local Development
 
-Jeffershizzle is a static SPA, not a build-based React app.
+Jeffershizzle uses Vite for instant hot module reloading and bundling.
 
 ### Frontend
 
-Run a simple local server from the project root:
+Run the Vite dev server from the project root:
 
 ```powershell
-python -m http.server 5500
+npm run dev
 ```
 
 Open:
 
-- `http://127.0.0.1:5500/`
+- `http://localhost:5500/`
 
 The SPA auto-switches to:
 
@@ -54,12 +54,13 @@ and runs on:
 
 ### Frontend
 
-Upload these root items to ASO `public_html`:
+Build and publish automatically:
 
-- `index.html`
-- `manifest.json`
-- `css\`
-- `js\`
+```powershell
+npm run publish
+```
+
+Or build manually to `dist/` with `npm run build` and upload the contents of `dist/` to ASO `public_html`.
 
 ### Backend
 
@@ -88,12 +89,11 @@ cloudflared.exe tunnel run --token-file C:\Users\Bill\.cloudflared\tokens\api-je
 
 ## Safe Update Pattern
 
-1. Edit locally in `jeffershizzle`
-2. Test with `python -m http.server 5500`
-3. If API-related, test against `localhost:8030` or `https://api.jeffershizzle.com`
-4. Push to GitHub if desired
-5. Upload frontend files to ASO
-6. If backend changed, update the server-side script and restart it
+1. Edit locally in `jeffershizzle` with `npm run dev`
+2. Test against `http://localhost:5500` and API
+3. Push to GitHub if desired
+4. Run `npm run publish` to build and upload to ASO
+5. If backend changed, update the server-side script and restart it
 
 ## Notes
 

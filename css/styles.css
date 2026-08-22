@@ -1,7 +1,8 @@
 /* ================================================================
    Jeffershizzle — Styles
    Archive-faithful reproduction of the original site aesthetic.
-   36px fixed banners, Source Serif Pro, images touching directly.
+   Source Serif Pro with tight negative tracking, Work Sans,
+   fixed banners with 2px white borders, 2px photo spacing.
    ================================================================ */
 
 /* --- Reset --- */
@@ -24,19 +25,73 @@ body {
     background: #000;
     min-height: 100vh;
     text-align: center;
+    overflow: hidden;
 }
 
+/* --- Heading Hierarchy & Signature Negative Tracking --- */
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.075em;
+    word-spacing: -0.02em;
+    margin: 0;
+    line-height: 0.9;
+    padding-bottom: 0;
+}
+
+h1 {
+    font-size: 66px;
+    font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 60px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 36px;
+    font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+    font-weight: 700;
+}
+
+h4 {
+    font-size: 30px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 400;
+}
+
+h5 {
+    font-size: 16px;
+    font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.060em;
+}
+
+h6 {
+    font-size: 12px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+}
+
+/* --- Link Styling --- */
 a {
-    color: inherit;
+    color: #fff;
+    font-weight: 600;
     text-decoration: none;
 }
 
 a:hover {
-    color: #ff00d9;
+    color: #f39; /* Signature hot pink #ff3399 */
 }
 
 a:visited {
-    color: inherit;
+    color: #fff;
+}
+
+a:visited:hover {
+    color: #f39;
 }
 
 img {
@@ -44,98 +99,82 @@ img {
 }
 
 /* ================================================================
-   BANNERS — 36px fixed, white inner border, original styling
+   BANNERS — Fixed with 2px white borders & authentic typography
    ================================================================ */
 
 .banner {
     position: fixed;
     width: 100%;
-    height: 36px;
+    height: 44px;
     background: #000;
     color: #fff;
-    text-align: left;
-    line-height: 36px;
-    font-size: 18px;
-    padding-left: 30px;
+    padding: 0 24px;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
 }
 
 .banner a {
     color: #fff;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
 }
 
 .banner a:hover {
-    color: #ff00d9;
+    color: #f39;
 }
 
-.banner h3 {
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 36px;
+.banner h3,
+#site-title,
+#site-nav a,
+#footer-back {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    word-spacing: -0.01em;
+    line-height: 1.2;
     margin: 0;
-    display: inline;
 }
 
 /* Top banner */
 #site-header {
     top: 0;
-    border-bottom: 3px solid #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
+    border-bottom: 2px solid #fff;
 }
 
 /* Bottom banner */
 #site-footer {
     bottom: 0;
-    border-top: 3px solid #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
-}
-
-#site-title {
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 36px;
-}
-
-#site-nav a {
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 36px;
-}
-
-#footer-back {
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 36px;
+    border-top: 2px solid #fff;
 }
 
 #footer-category {
-    font-size: 14px;
-    font-weight: 400;
-    font-style: italic;
-    opacity: 0.5;
-    max-width: 400px;
+    font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    opacity: 0.85;
+    max-width: 500px;
     text-align: right;
+    margin-left: auto; /* Always keep category name on the right side */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    line-height: 1.2;
+    padding-bottom: 2px;
 }
 
 /* ================================================================
-   MAIN CONTENT AREA
-   Sits between the two 36px banners (39px with border)
+   MAIN CONTENT AREA — Flush against banners, zero gap
    ================================================================ */
 
 #gallery-container {
     position: fixed;
-    top: 39px;
-    bottom: 39px;
+    top: 44px; /* Flush directly under 44px top banner */
+    bottom: 44px; /* Flush directly above 44px bottom banner */
     left: 0;
     right: 0;
     overflow-y: auto;
@@ -147,6 +186,8 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
+    margin: 0;
 }
 
 /* ================================================================
@@ -156,6 +197,11 @@ img {
 .gallery-wrapper {
     opacity: 0;
     transition: opacity 0.2s ease-in;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
 }
 
 .gallery-wrapper.loaded {
@@ -168,7 +214,7 @@ img {
 
 #instructions {
     position: fixed;
-    bottom: 55px;
+    bottom: 58px;
     left: 0;
     right: 0;
     text-align: center;
@@ -177,10 +223,12 @@ img {
 }
 
 #instructions p {
-    font-size: 14px;
-    font-weight: 400;
+    font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
     color: #fff;
-    opacity: 0.6;
+    opacity: 0.85;
 }
 
 .hidden {
@@ -220,16 +268,24 @@ img {
 }
 
 /* ================================================================
-   GALLERY LAYOUTS — Images touch directly (1px gap max)
+   GALLERY LAYOUTS — Exactly 2px space between photos
    ================================================================ */
 
-/* --- Grid layouts (table-like, images touching) --- */
-
+/* --- Grid layouts (2px gap between photos) --- */
 .layout-grid {
     display: inline-grid;
-    gap: 1px;
+    gap: 2px;
+    margin: 0 auto;
     line-height: 0;
     font-size: 0;
+}
+
+.layout-grid a {
+    display: block;
+    line-height: 0;
+    font-size: 0;
+    padding: 0;
+    margin: 0;
 }
 
 .layout-grid img {
@@ -237,6 +293,7 @@ img {
     height: auto;
     display: block;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 /* 1x1 single */
@@ -245,70 +302,89 @@ img {
     max-width: 960px;
 }
 
-/* 2x1 pair */
+/* 2x1 pair (e.g. entry landing pair) */
 .layout-grid.cols-2 {
     grid-template-columns: 1fr 1fr;
-    max-width: 1100px;
+    max-width: 1000px;
 }
 
-/* 3 columns */
+/* 3 columns single row (3x1) */
 .layout-grid.cols-3 {
-    grid-template-columns: 1fr 1fr 1fr;
-    max-width: 1200px;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1120px;
 }
 
-/* 4 columns */
+/* 4 columns (4x1) */
 .layout-grid.cols-4 {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    max-width: 1300px;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1240px;
 }
 
-/* 5 columns */
+/* 5 columns (5x1) */
 .layout-grid.cols-5 {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    max-width: 1400px;
+    grid-template-columns: repeat(5, 1fr);
+    max-width: 1360px;
 }
 
-/* --- Vertical scroll (stacked single-column) --- */
-
+/* --- Vertical Scroll (2px gap between photos) --- */
 .layout-vertical {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1px;
+    gap: 2px;
     padding: 0;
     width: 100%;
-    max-width: 960px;
+    max-width: 620px;
     margin: 0 auto;
     line-height: 0;
     font-size: 0;
 }
 
+.layout-vertical a {
+    display: block;
+    line-height: 0;
+    font-size: 0;
+    padding: 0;
+    margin: 0;
+}
+
 .layout-vertical img {
+    max-width: 620px;
     width: 100%;
     height: auto;
     display: block;
     cursor: pointer;
 }
 
-/* --- Enlarged single view --- */
-
+/* --- Enlarged single view (single 960px) --- */
 .layout-enlarged {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
-    min-height: calc(100vh - 78px);
+    min-height: calc(100vh - 88px);
+    padding: 0;
+    margin: 0;
+}
+
+.layout-enlarged a {
+    display: inline-block;
+    line-height: 0;
+    font-size: 0;
+    padding: 0;
+    margin: 0;
 }
 
 .layout-enlarged img {
     max-width: 960px;
-    max-height: calc(100vh - 100px);
+    max-height: calc(100vh - 88px);
     width: auto;
     height: auto;
     object-fit: contain;
     cursor: pointer;
+    display: block;
+    margin: 0 auto;
 }
 
 /* ================================================================
@@ -339,21 +415,27 @@ img {
     transform: translate(-50%, -50%);
     background-color: #fff;
     color: #000;
-    padding: 15px 25px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 80%;
+    padding: 20px 32px;
+    box-shadow: none;
+    max-width: 85%;
     text-align: center;
     z-index: 2;
     border-radius: 4px;
     cursor: pointer;
 }
 
+.gallery-from-browse img {
+    cursor: default;
+}
+
 .text-window h1 {
     margin: 0;
-    font-size: 24px;
-    line-height: 1.5;
+    font-size: 28px;
+    line-height: 1.35;
     font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
-    font-weight: 400;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    color: #000;
 }
 
 .text-window a {
@@ -362,7 +444,7 @@ img {
 }
 
 .text-window a:hover {
-    color: #ff00d9;
+    color: #f39;
 }
 
 /* ================================================================
@@ -370,25 +452,42 @@ img {
    ================================================================ */
 
 .browse-container {
-    max-width: 800px;
+    max-width: 960px;
     margin: 0 auto;
-    padding: 30px;
+    padding: 36px 24px;
     text-align: left;
 }
 
+.browse-intro {
+    font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    word-spacing: -0.01em;
+    color: #fff;
+    margin-bottom: 24px;
+    line-height: 1.2;
+}
+
 .browse-list {
-    line-height: 1.8;
-    white-space: normal;
+    line-height: 1.18;
+    word-break: break-word;
 }
 
 .browse-item {
-    font-size: 16px;
-    font-weight: 400;
-    white-space: normal;
+    font-size: 25px;
+    font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    word-spacing: -0.01em;
+    color: #fff;
+    display: inline;
+    margin-right: 14px;
+    transition: color 0.15s ease;
 }
 
-.browse-item::after {
-    content: '\00a0\00a0';
+.browse-item:hover {
+    color: #f90; /* Authentic vibrant orange hover */
 }
 
 /* ================================================================
@@ -396,23 +495,49 @@ img {
    ================================================================ */
 
 @media (max-width: 768px) {
+    .banner {
+        height: 38px;
+        line-height: 38px;
+        padding: 0 14px;
+    }
+
+    #gallery-container {
+        top: 38px;
+        bottom: 38px;
+    }
+
+    .banner h3, #site-title, #site-nav a, #footer-back {
+        font-size: 18px;
+    }
+
+    #footer-category {
+        font-size: 15px;
+        max-width: 220px;
+    }
+
+    .browse-intro {
+        font-size: 20px;
+        margin-bottom: 18px;
+    }
+
+    .browse-item {
+        font-size: 20px;
+        margin-right: 10px;
+    }
+
     .layout-grid.cols-3,
     .layout-grid.cols-4,
     .layout-grid.cols-5 {
         grid-template-columns: 1fr 1fr;
     }
 
-    .banner {
-        font-size: 14px;
-        padding-left: 16px;
-    }
-
-    #site-header, #site-footer {
-        padding: 0 16px;
+    .layout-enlarged {
+        min-height: calc(100vh - 76px);
     }
 
     .layout-enlarged img {
         max-width: 100%;
+        max-height: calc(100vh - 76px);
     }
 }
 
@@ -422,5 +547,18 @@ img {
     .layout-grid.cols-4,
     .layout-grid.cols-5 {
         grid-template-columns: 1fr;
+    }
+
+    .browse-intro {
+        font-size: 18px;
+    }
+
+    .browse-item {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .text-window h1 {
+        font-size: 22px;
     }
 }

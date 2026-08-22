@@ -11,6 +11,8 @@
  *   #/browse     → Alphabetical category listing
  */
 
+import { CONFIG } from './config.js';
+
 let manifest = null;
 let currentGalleryId = null;
 let currentPhotoIndex = null;
@@ -23,8 +25,7 @@ async function init() {
         const resp = await fetch('manifest.json');
         manifest = await resp.json();
         
-        // Use local API in dev
-        if (!(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        if (manifest.config && manifest.config.imageBaseUrl) {
             CONFIG.imageBaseUrl = manifest.config.imageBaseUrl;
         }
         
@@ -42,17 +43,19 @@ async function init() {
 // ---- Router ----
 
 function onRoute() {
-    const hash = window.location.hash || '#/';
-    const parts = hash.replace('#/', '').split('/').filter(Boolean);
+    const rawHash = window.location.hash || '#/';
+    const isFromBrowse = rawHash.includes('from=browse');
+    const cleanHash = rawHash.split('?')[0];
+    const parts = cleanHash.replace('#/', '').split('/').filter(Boolean);
     
     if (parts[0] === 'browse') {
         renderBrowse();
     } else if (parts[0] === 'enter') {
-        renderGallery(manifest.entry.id);
+        renderGallery(manifest.entry.id, false);
     } else if (parts.length === 0 || (parts.length === 1 && parts[0] === '')) {
         renderLanding();
     } else if (parts.length === 1) {
-        renderGallery(parts[0]);
+        renderGallery(parts[0], isFromBrowse);
     } else if (parts.length === 2) {
         renderEnlarged(parts[0], parseInt(parts[1], 10));
     }
@@ -66,9 +69,12 @@ function renderLanding() {
     
     const container = document.getElementById('gallery-content');
     
-    // Pick a random background from BACK02 (1-92)
-    const bgNum = String(Math.floor(Math.random() * 92) + 1).padStart(2, '0');
-    const bgUrl = `${CONFIG.imageBaseUrl}/landing/${bgNum}.jpg`;
+    // Pick a random background from active landing images
+    const landingImages = manifest.landingImages && manifest.landingImages.length > 0 
+        ? manifest.landingImages 
+        : Array.from({length: 92}, (_, i) => `${String(i + 1).padStart(2, '0')}.jpg`).filter(f => f !== '78.jpg');
+    const chosenImage = landingImages[Math.floor(Math.random() * landingImages.length)];
+    const bgUrl = `${CONFIG.imageBaseUrl}/landing/${chosenImage}`;
     
     container.innerHTML = `
         <div class="landing-bg" id="landing-bg"></div>
@@ -82,7 +88,7 @@ function renderLanding() {
     // Hide banners text on landing, show empty banners
     document.getElementById('site-title').style.visibility = 'hidden';
     document.getElementById('site-nav').style.visibility = 'hidden';
-    document.getElementById('footer-back').style.visibility = 'hidden';
+    document.getElementById('footer-back').style.display = 'none';
     document.getElementById('footer-category').textContent = '';
     hideInstructions();
     
@@ -99,12 +105,11 @@ function renderLanding() {
 function showBannerText() {
     document.getElementById('site-title').style.visibility = '';
     document.getElementById('site-nav').style.visibility = '';
-    document.getElementById('footer-back').style.visibility = '';
 }
 
 // ---- Gallery Rendering ----
 
-function renderGallery(galleryId) {
+function renderGallery(galleryId, fromBrowse = false) {
     const gallery = manifest.galleries[galleryId];
     if (!gallery) { renderNotFound(galleryId); return; }
     
@@ -113,7 +118,7 @@ function renderGallery(galleryId) {
     showBannerText();
     
     const container = document.getElementById('gallery-content');
-    const isEntry = galleryId === manifest.entry.id;
+    const isEntry = galleryId === manifest.entry.id && !fromBrowse;
     
     // Build photos array
     const photos = gallery.photos && gallery.photos.length > 0 
@@ -122,36 +127,41 @@ function renderGallery(galleryId) {
     
     // Determine layout
     const isGrid = gallery.template.startsWith('grid-');
-    const isVertical = gallery.template === 'vertical-scroll' || gallery.template === 'single';
     
-    let wrapperClass = 'gallery-wrapper';
-    let innerClass = '';
+    let wrapperClass = fromBrowse ? 'gallery-wrapper gallery-from-browse' : 'gallery-wrapper';
     
     if (isGrid) {
         const cols = gallery.gridCols || guessGridCols(gallery.template);
-        innerClass = `layout-grid cols-${cols}`;
+        const innerClass = `layout-grid cols-${cols}`;
+        
+        let gridHtml = '';
+        photos.forEach((photo, index) => {
+            const imgUrl = `${CONFIG.imageBaseUrl}/${galleryId}/${photo.image}`;
+            if (fromBrowse) {
+                gridHtml += `<img data-src="${imgUrl}" alt="" />`;
+            } else {
+                const clickTarget = `#/${galleryId}/${index}`;
+                gridHtml += `<a href="${clickTarget}"><img data-src="${imgUrl}" alt="" /></a>`;
+            }
+        });
+        container.innerHTML = `<div class="${wrapperClass}"><div class="${innerClass}">${gridHtml}</div></div>`;
     } else {
-        innerClass = 'layout-vertical';
+        const innerClass = 'layout-vertical';
+        let vertHtml = '';
+        photos.forEach((photo, index) => {
+            const imgUrl = `${CONFIG.imageBaseUrl}/${galleryId}/${photo.image}`;
+            if (fromBrowse) {
+                vertHtml += `<img data-src="${imgUrl}" alt="" />`;
+            } else {
+                const clickTarget = `#/${galleryId}/${index}`;
+                vertHtml += `<a href="${clickTarget}"><img data-src="${imgUrl}" alt="" /></a>`;
+            }
+        });
+        container.innerHTML = `<div class="${wrapperClass}"><div class="${innerClass}">${vertHtml}</div></div>`;
     }
     
-    // Build HTML
-    let html = `<div class="${wrapperClass}"><div class="${innerClass}">`;
-    
-    photos.forEach((photo, index) => {
-        const imgUrl = `${CONFIG.imageBaseUrl}/${galleryId}/${photo.image}`;
-        const clickTarget = `#/${galleryId}/${index}`;
-        
-        html += `<a href="${clickTarget}">`;
-        html += `<img data-src="${imgUrl}" alt="" />`;
-        html += `</a>`;
-    });
-    
-    html += '</div></div>';
-    
-    container.innerHTML = html;
-    
     // Update UI
-    updateFooter(galleryId, gallery);
+    updateFooter(galleryId, gallery, false, fromBrowse);
     
     // Instructions only on entry page
     if (isEntry) {
@@ -227,11 +237,12 @@ function renderBrowse() {
     const container = document.getElementById('gallery-content');
     
     let html = '<div class="gallery-wrapper"><div class="browse-container">';
+    html += '<p class="browse-intro">this is an archive, modernized with artificial intelligence, slightly imperfect.</p>';
     html += '<div class="browse-list">';
     
     for (const item of manifest.browse) {
         if (item.galleryId) {
-            html += `<a class="browse-item" href="#/${item.galleryId}">${item.name}</a>`;
+            html += `<a class="browse-item" href="#/${item.galleryId}?from=browse">${item.name}</a>`;
         } else {
             html += `<span class="browse-item" style="opacity:0.3">${item.name}</span>`;
         }
@@ -241,8 +252,7 @@ function renderBrowse() {
     
     container.innerHTML = html;
     
-    document.getElementById('footer-back').href = '#/';
-    document.getElementById('footer-back').textContent = 'index.';
+    document.getElementById('footer-back').style.display = 'none';
     document.getElementById('footer-category').textContent = '';
     hideInstructions();
     
@@ -272,19 +282,21 @@ function guessGridCols(template) {
     return 2;
 }
 
-function updateFooter(galleryId, gallery, isEnlarged) {
+function updateFooter(galleryId, gallery, isEnlarged, fromBrowse = false) {
     const backLink = document.getElementById('footer-back');
     const categorySpan = document.getElementById('footer-category');
     
     if (isEnlarged) {
+        backLink.style.display = '';
         backLink.href = `#/${galleryId}`;
         backLink.textContent = 'back.';
-    } else if (galleryId === manifest.entry.id) {
-        backLink.href = '#/';
-        backLink.textContent = 'index.';
+    } else if (fromBrowse) {
+        backLink.style.display = '';
+        backLink.href = '#/browse';
+        backLink.textContent = 'back.';
     } else {
-        backLink.href = '#/enter';
-        backLink.textContent = 'index.';
+        backLink.style.display = 'none';
+        backLink.textContent = '';
     }
     
     categorySpan.textContent = gallery.category || '';

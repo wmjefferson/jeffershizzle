@@ -4,8 +4,9 @@ import { fileURLToPath } from 'node:url';
 import { collectFilesRecursively, readDeployConfig, uploadFileViaFtp } from './ftp-upload.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const deployConfigPath = path.join(repoRoot, '.vscode', 'sftp.json');
-const sourceDir = path.join(repoRoot, 'spa');
+const sourceDir = existsSync(path.join(repoRoot, 'dist')) 
+  ? path.join(repoRoot, 'dist') 
+  : (existsSync(path.join(repoRoot, 'spa')) ? path.join(repoRoot, 'spa') : repoRoot);
 
 function ensureDeployConfig() {
   const deployConfig = readDeployConfig(deployConfigPath);

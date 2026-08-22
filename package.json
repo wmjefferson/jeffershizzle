@@ -1,12 +1,31 @@
 {
   "name": "jeffershizzle",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "buildlog": "node ..\\jeffersonwm\\scripts\\logged-build.mjs --app jeffershizzle",
+    "buildlog:jeffershizzle": "node ..\\jeffersonwm\\scripts\\logged-build.mjs --app jeffershizzle",
+    "buildlog:shizzle": "node ..\\jeffersonwm\\scripts\\logged-build.mjs --app shizzle",
+    "jeffvers": "node ..\\jeffersonwm\\scripts\\version-log.mjs --app jeffershizzle",
+    "jeffvers:jeffershizzle": "node ..\\jeffersonwm\\scripts\\version-log.mjs --app jeffershizzle",
+    "jeffvers:shizzle": "node ..\\jeffersonwm\\scripts\\version-log.mjs --app shizzle",
+    "preview": "vite preview",
+    "version": "node -e \"console.log('Use npm run version:patch, npm run version:minor, or npm run version:major')\"",
     "version:patch": "npm version patch --no-git-tag-version",
     "version:minor": "npm version minor --no-git-tag-version",
     "version:major": "npm version major --no-git-tag-version",
-    "publish": "node scripts/publish.mjs"
+    "version:patch:jeffershizzle": "node ..\\jeffersonwm\\scripts\\version-and-log.mjs --app jeffershizzle --type patch",
+    "version:patch:shizzle": "node ..\\jeffersonwm\\scripts\\version-and-log.mjs --app shizzle --type patch",
+    "version:minor:jeffershizzle": "node ..\\jeffersonwm\\scripts\\version-and-log.mjs --app jeffershizzle --type minor",
+    "version:minor:shizzle": "node ..\\jeffersonwm\\scripts\\version-and-log.mjs --app shizzle --type minor",
+    "version:major:jeffershizzle": "node ..\\jeffersonwm\\scripts\\version-and-log.mjs --app jeffershizzle --type major",
+    "version:major:shizzle": "node ..\\jeffersonwm\\scripts\\version-and-log.mjs --app shizzle --type major",
+    "publish": "npm run build && node scripts/publish.mjs"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
   }
 }

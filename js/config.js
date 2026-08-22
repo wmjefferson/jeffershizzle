@@ -1,12 +1,9 @@
 /**
  * Jeffershizzle SPA — Configuration
  */
-const CONFIG = {
-    // Production: through Cloudflare Tunnel
+export const CONFIG = {
+    // Production & Dev default: live image API via Cloudflare Tunnel
     imageBaseUrl: "https://api.jeffershizzle.com/images",
-
-    // Local dev: direct to API
-    // imageBaseUrl: "http://localhost:8030/images",
 
     siteName: "jeffershizzle dotcom",
 
@@ -17,8 +14,3 @@ const CONFIG = {
     // Image loading
     lazyLoadThreshold: 200, // px from viewport
 };
-
-// Auto-detect local dev
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    CONFIG.imageBaseUrl = "http://localhost:8030/images";
-}
