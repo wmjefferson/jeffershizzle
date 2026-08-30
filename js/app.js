@@ -16,6 +16,7 @@ import { CONFIG } from './config.js';
 let manifest = null;
 let currentGalleryId = null;
 let currentPhotoIndex = null;
+let currentFromBrowse = false;
 
 // ---- Bootstrap ----
 
@@ -57,7 +58,7 @@ function onRoute() {
     } else if (parts.length === 1) {
         renderGallery(parts[0], isFromBrowse);
     } else if (parts.length === 2) {
-        renderEnlarged(parts[0], parseInt(parts[1], 10));
+        renderEnlarged(parts[0], parseInt(parts[1], 10), isFromBrowse);
     }
 }
 
@@ -90,6 +91,7 @@ function renderLanding() {
     document.getElementById('site-nav').style.visibility = 'hidden';
     document.getElementById('footer-back').style.display = 'none';
     document.getElementById('footer-category').textContent = '';
+    hideFooterPersonalLink();
     hideInstructions();
     
     // Preload background, then fade in
@@ -107,6 +109,14 @@ function showBannerText() {
     document.getElementById('site-nav').style.visibility = '';
 }
 
+function showFooterPersonalLink() {
+    document.getElementById('footer-personal').style.display = '';
+}
+
+function hideFooterPersonalLink() {
+    document.getElementById('footer-personal').style.display = 'none';
+}
+
 // ---- Gallery Rendering ----
 
 function renderGallery(galleryId, fromBrowse = false) {
@@ -115,7 +125,9 @@ function renderGallery(galleryId, fromBrowse = false) {
     
     currentGalleryId = galleryId;
     currentPhotoIndex = null;
+    currentFromBrowse = fromBrowse;
     showBannerText();
+    showFooterPersonalLink();
     
     const container = document.getElementById('gallery-content');
     const isEntry = galleryId === manifest.entry.id && !fromBrowse;
@@ -137,10 +149,10 @@ function renderGallery(galleryId, fromBrowse = false) {
         let gridHtml = '';
         photos.forEach((photo, index) => {
             const imgUrl = `${CONFIG.imageBaseUrl}/${galleryId}/${photo.image}`;
+            const clickTarget = fromBrowse ? `#/${galleryId}/${index}?from=browse` : `#/${galleryId}/${index}`;
             if (fromBrowse) {
-                gridHtml += `<img data-src="${imgUrl}" alt="" />`;
+                gridHtml += `<a href="${clickTarget}"><img data-src="${imgUrl}" alt="" /></a>`;
             } else {
-                const clickTarget = `#/${galleryId}/${index}`;
                 gridHtml += `<a href="${clickTarget}"><img data-src="${imgUrl}" alt="" /></a>`;
             }
         });
@@ -150,10 +162,10 @@ function renderGallery(galleryId, fromBrowse = false) {
         let vertHtml = '';
         photos.forEach((photo, index) => {
             const imgUrl = `${CONFIG.imageBaseUrl}/${galleryId}/${photo.image}`;
+            const clickTarget = fromBrowse ? `#/${galleryId}/${index}?from=browse` : `#/${galleryId}/${index}`;
             if (fromBrowse) {
-                vertHtml += `<img data-src="${imgUrl}" alt="" />`;
+                vertHtml += `<a href="${clickTarget}"><img data-src="${imgUrl}" alt="" /></a>`;
             } else {
-                const clickTarget = `#/${galleryId}/${index}`;
                 vertHtml += `<a href="${clickTarget}"><img data-src="${imgUrl}" alt="" /></a>`;
             }
         });
@@ -178,13 +190,15 @@ function renderGallery(galleryId, fromBrowse = false) {
     document.getElementById('gallery-container').scrollTop = 0;
 }
 
-function renderEnlarged(galleryId, photoIndex) {
+function renderEnlarged(galleryId, photoIndex, fromBrowse = false) {
     const gallery = manifest.galleries[galleryId];
     if (!gallery) { renderNotFound(galleryId); return; }
     
     currentGalleryId = galleryId;
     currentPhotoIndex = photoIndex;
+    currentFromBrowse = fromBrowse;
     showBannerText();
+    showFooterPersonalLink();
     
     const photos = gallery.photos && gallery.photos.length > 0 
         ? gallery.photos 
@@ -196,9 +210,11 @@ function renderEnlarged(galleryId, photoIndex) {
     const container = document.getElementById('gallery-content');
     const imgUrl = `${CONFIG.imageBaseUrl}/${galleryId}/${photo.image}`;
     
-    // Where does clicking go?
+    // Browse-origin enlarged views return to browse on click; spiderweb views follow links.
     let nextLink = `#/${galleryId}`;
-    if (photo.linksTo) {
+    if (fromBrowse) {
+        nextLink = '#/browse';
+    } else if (photo.linksTo) {
         nextLink = `#/${photo.linksTo}`;
     }
     
@@ -214,7 +230,7 @@ function renderEnlarged(galleryId, photoIndex) {
         </div>
     `;
     
-    updateFooter(galleryId, gallery, true);
+    updateFooter(galleryId, gallery, true, fromBrowse);
     
     // Instructions only on the entry gallery's enlarged view
     if (isEntry) {
@@ -232,7 +248,9 @@ function renderEnlarged(galleryId, photoIndex) {
 function renderBrowse() {
     currentGalleryId = null;
     currentPhotoIndex = null;
+    currentFromBrowse = false;
     showBannerText();
+    showFooterPersonalLink();
     
     const container = document.getElementById('gallery-content');
     
@@ -286,17 +304,25 @@ function updateFooter(galleryId, gallery, isEnlarged, fromBrowse = false) {
     const backLink = document.getElementById('footer-back');
     const categorySpan = document.getElementById('footer-category');
     
-    if (isEnlarged) {
+    if (isEnlarged && fromBrowse) {
+        backLink.style.display = '';
+        backLink.href = '#/browse';
+        backLink.textContent = 'back.';
+        categorySpan.style.display = 'none';
+    } else if (isEnlarged) {
         backLink.style.display = '';
         backLink.href = `#/${galleryId}`;
         backLink.textContent = 'back.';
+        categorySpan.style.display = 'none';
     } else if (fromBrowse) {
         backLink.style.display = '';
         backLink.href = '#/browse';
         backLink.textContent = 'back.';
+        categorySpan.style.display = 'none';
     } else {
         backLink.style.display = 'none';
         backLink.textContent = '';
+        categorySpan.style.display = '';
     }
     
     categorySpan.textContent = gallery.category || '';
@@ -371,7 +397,7 @@ document.addEventListener('keydown', (e) => {
     
     if (e.key === 'Escape') {
         if (currentPhotoIndex !== null) {
-            window.location.hash = `#/${currentGalleryId}`;
+            window.location.hash = currentFromBrowse ? `#/${currentGalleryId}?from=browse` : `#/${currentGalleryId}`;
         } else {
             window.location.hash = '#/';
         }
@@ -387,15 +413,15 @@ document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
             e.preventDefault();
             const next = Math.min(currentPhotoIndex + 1, photos.length - 1);
-            window.location.hash = `#/${currentGalleryId}/${next}`;
+            window.location.hash = currentFromBrowse ? `#/${currentGalleryId}/${next}?from=browse` : `#/${currentGalleryId}/${next}`;
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
             e.preventDefault();
             const prev = Math.max(currentPhotoIndex - 1, 0);
-            window.location.hash = `#/${currentGalleryId}/${prev}`;
+            window.location.hash = currentFromBrowse ? `#/${currentGalleryId}/${prev}?from=browse` : `#/${currentGalleryId}/${prev}`;
         } else if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             const photo = photos[currentPhotoIndex];
-            if (photo && photo.linksTo) {
+            if (!currentFromBrowse && photo && photo.linksTo) {
                 window.location.hash = `#/${photo.linksTo}`;
             }
         }

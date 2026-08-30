@@ -130,7 +130,8 @@ img {
 .banner h3,
 #site-title,
 #site-nav a,
-#footer-back {
+#footer-back,
+#footer-personal {
     font-size: 20px;
     font-weight: 500;
     letter-spacing: -0.03em;
@@ -158,13 +159,17 @@ img {
     letter-spacing: -0.02em;
     opacity: 0.85;
     max-width: 500px;
-    text-align: right;
-    margin-left: auto; /* Always keep category name on the right side */
+    text-align: left;
+    margin-right: auto;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     line-height: 1.2;
     padding-bottom: 2px;
+}
+
+#footer-personal {
+    margin-left: 24px;
 }
 
 /* ================================================================
@@ -506,7 +511,7 @@ img {
         bottom: 38px;
     }
 
-    .banner h3, #site-title, #site-nav a, #footer-back {
+    .banner h3, #site-title, #site-nav a, #footer-back, #footer-personal {
         font-size: 18px;
     }
 
